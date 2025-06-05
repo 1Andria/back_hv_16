@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const cloudinary_config_1 = require("../../config/cloudinary.config");
+const products_services_1 = require("../../services/products.services");
+const hasRole_middleware_1 = require("../../middlewares/hasRole.middleware");
+const validate_middleware_1 = require("../../middlewares/validate.middleware");
+const products_validation_1 = require("../../validations/products.validation");
+const productRouter = (0, express_1.Router)();
+productRouter.get("/", products_services_1.getAllProducts);
+productRouter.get("/:id", products_services_1.getProductById);
+productRouter.post("/", cloudinary_config_1.upload.single("image"), (0, validate_middleware_1.validate)(products_validation_1.productSchema), products_services_1.createNewProduct);
+productRouter.delete("/:id", hasRole_middleware_1.hasRole, products_services_1.deleteById);
+productRouter.put("/:id", cloudinary_config_1.upload.single("image"), hasRole_middleware_1.hasRole, products_services_1.updateById);
+exports.default = productRouter;
