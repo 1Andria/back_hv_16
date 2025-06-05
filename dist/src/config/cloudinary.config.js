@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFromCloudinary = exports.upload = void 0;
+exports.requireFile = exports.deleteFromCloudinary = exports.upload = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const cloudinary_1 = require("cloudinary");
 const multer_storage_cloudinary_1 = require("multer-storage-cloudinary");
@@ -49,3 +49,11 @@ const deleteFromCloudinary = (publicFileId) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.deleteFromCloudinary = deleteFromCloudinary;
+const requireFile = (req, res, next) => {
+    if (!req.file) {
+        res.status(400).json({ error: "ფოტოს ატვირთვა სავალდებულოა" });
+        return;
+    }
+    next();
+};
+exports.requireFile = requireFile;

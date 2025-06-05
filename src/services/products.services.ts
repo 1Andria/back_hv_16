@@ -21,17 +21,12 @@ const getProductById = async (req: Request, res: Response) => {
 
 const createNewProduct = async (req: Request, res: Response) => {
   const { name, description, price, category } = req.body;
-
-  if (!req.file) {
-    res.status(400).json({ error: "Image is required" });
-    return;
-  }
   const product = await productModel.create({
     name,
     description,
     price,
     category,
-    image: req.file.path,
+    image: req?.file?.path,
   });
 
   res.status(201).json({ message: "Created successfully", product });

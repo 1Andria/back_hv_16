@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { upload } from "../../config/cloudinary.config";
+import { requireFile, upload } from "../../config/cloudinary.config";
 import {
   createNewProduct,
   deleteById,
@@ -17,6 +17,7 @@ productRouter.get("/:id", getProductById);
 productRouter.post(
   "/",
   upload.single("image"),
+  requireFile,
   validate(productSchema),
   createNewProduct
 );

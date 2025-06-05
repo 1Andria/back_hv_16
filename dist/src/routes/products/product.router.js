@@ -9,7 +9,7 @@ const products_validation_1 = require("../../validations/products.validation");
 const productRouter = (0, express_1.Router)();
 productRouter.get("/", products_services_1.getAllProducts);
 productRouter.get("/:id", products_services_1.getProductById);
-productRouter.post("/", cloudinary_config_1.upload.single("image"), (0, validate_middleware_1.validate)(products_validation_1.productSchema), products_services_1.createNewProduct);
+productRouter.post("/", cloudinary_config_1.upload.single("image"), cloudinary_config_1.requireFile, (0, validate_middleware_1.validate)(products_validation_1.productSchema), products_services_1.createNewProduct);
 productRouter.delete("/:id", hasRole_middleware_1.hasRole, products_services_1.deleteById);
 productRouter.put("/:id", cloudinary_config_1.upload.single("image"), hasRole_middleware_1.hasRole, products_services_1.updateById);
 exports.default = productRouter;

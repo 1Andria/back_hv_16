@@ -32,17 +32,14 @@ const getProductById = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.getProductById = getProductById;
 const createNewProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const { name, description, price, category } = req.body;
-    if (!req.file) {
-        res.status(400).json({ error: "Image is required" });
-        return;
-    }
     const product = yield product_model_1.default.create({
         name,
         description,
         price,
         category,
-        image: req.file.path,
+        image: (_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.path,
     });
     res.status(201).json({ message: "Created successfully", product });
 });

@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
+import { Request, Response, NextFunction } from "express";
 
 dotenv.config();
 
@@ -37,4 +38,12 @@ const deleteFromCloudinary = async (publicFileId: string): Promise<void> => {
   }
 };
 
-export { upload, deleteFromCloudinary };
+const requireFile = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.file) {
+    res.status(400).json({ error: "ფოტოს ატვირთვა სავალდებულოა" });
+    return;
+  }
+  next();
+};
+
+export { upload, deleteFromCloudinary, requireFile };
