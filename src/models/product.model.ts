@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { IReview, reviewSchema } from "./review.model";
 
 export interface IProduct extends Document {
   name: string;
@@ -8,6 +9,7 @@ export interface IProduct extends Document {
   image: string;
   createdAt?: Date;
   updatedAt?: Date;
+  review: IReview[];
 }
 
 const productSchema: Schema<IProduct> = new mongoose.Schema(
@@ -31,6 +33,9 @@ const productSchema: Schema<IProduct> = new mongoose.Schema(
     image: {
       type: String,
       required: true,
+    },
+    review: {
+      type: [reviewSchema],
     },
   },
   { timestamps: true }

@@ -12,15 +12,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateById = exports.deleteById = exports.createNewProduct = exports.getProductById = exports.getAllProducts = void 0;
+exports.createReview = exports.updateById = exports.deleteById = exports.createNewProduct = exports.getProductById = exports.getAllProducts = void 0;
 const product_model_1 = __importDefault(require("../models/product.model"));
 const mongoose_1 = require("mongoose");
 const cloudinary_config_1 = require("../config/cloudinary.config");
 const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const products = yield product_model_1.default.find();
+    const filter = {};
+    if (typeof req.query.category === "string") {
+        filter.category = req.query.category;
+    }
+    if (req.query.search) {
+        filter.name = { $regex: new RegExp(String(req.query.search), "i") };
+    }
+    let sort = {};
+    if (req.query.price === "asc") {
+        sort.price = 1;
+    }
+    else if (req.query.price === "desc") {
+        sort.price = -1;
+    }
+    const page = parseInt(String(req.query.page)) || 1;
+    const limit = Math.min(parseInt(String(req.query.limit)) || 30, 100);
+    const skip = (page - 1) * limit;
+    const products = yield product_model_1.default
+        .find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit);
     res.json(products);
 });
 exports.getAllProducts = getAllProducts;
+// 2) პაგინაცია
+//    * ამოიღეთ limit და page query პარამეტრებით.
+//    * მაგ.: /products?page=2&limit=10 დააბრუნებს მეორე გვერდს, 10 პროდუქტს.
+//    * გაითვალისწინეთ ზედა ზღვარი, დიფოლტად უნდა წამოიღოს 30 პროდუქტი
+//    * პაგინაცია უნდა გაკეთდეს ბექის მხარეს არ გამოიყნოთ slice მეთოდი
 const getProductById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     if (!(0, mongoose_1.isValidObjectId)(id)) {
@@ -95,3 +121,23 @@ const updateById = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     res.json({ message: "Product updated successfully", data: updatedProduct });
 });
 exports.updateById = updateById;
+const createReview = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const email = req.headers.email;
+    const { rating, comment } = req.body;
+    const product = yield product_model_1.default.findByIdAndUpdate(id, {
+        $push: {
+            review: {
+                email,
+                rating,
+                comment,
+            },
+        },
+    }, { new: true });
+    if (!product) {
+        res.status(404).json({ error: "Product not found" });
+        return;
+    }
+    res.status(200).json({ message: "Review created successfully", product });
+});
+exports.createReview = createReview;

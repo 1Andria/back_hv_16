@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+const review_model_1 = require("./review.model");
 const productSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
@@ -24,6 +25,9 @@ const productSchema = new mongoose_1.default.Schema({
     image: {
         type: String,
         required: true,
+    },
+    review: {
+        type: [review_model_1.reviewSchema],
     },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("hvProducts", productSchema);
